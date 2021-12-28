@@ -1,0 +1,26 @@
+
+# stops committing node_modules
+# as should be built up by whoever downloads
+# the code.
+**/node_modules
+
+# Dependency directories
+node_modules/
+jspm_packages/
+
+# npm cache directory
+.npm
+
+# ESlint cache
+.eslintcache
+
+# dotenv environment variables file
+# so that my password doesn't end up
+# committed to my repo.
+.env
+.env
+.env.test
+
+# Apple's directory / folder config file
+.DS_Store
+

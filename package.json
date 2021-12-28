@@ -1,0 +1,30 @@
+{
+  "name": "social-network-api",
+  "version": "1.0.0",
+  "description": "Mongoose back-end social networking API",
+  "main": "index.js",
+  "directories": {
+    "doc": "doc"
+  },"scripts": {
+    "start": "node index",
+    "dev": "nodemon index"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Mark33Mark/social-network-api.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Mark33Mark/social-network-api/issues"
+  },
+  "homepage": "https://github.com/Mark33Mark/social-network-api#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "mongoose": "^6.0.13"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.9"
+  }
+}
