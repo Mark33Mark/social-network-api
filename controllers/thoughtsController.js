@@ -1,70 +1,98 @@
+
 const { Thought, User } = require('../models');
 
 const thoughtsController = {
   
-  // addThought,
+  // == THOUGHTS ==================================================================================
+
+  // == "C" create thought ============
   addThought({ params, body }, res ) 
   {
-    Thought.create( body )
+    console.log( { params, body } );
 
-    .then(({ _id }) => {
-      return User.findOneAndUpdate(
-                    { _id: params.userId }, 
-                    { $push: { thoughts: _id } }, 
-                    { new: true, runValidators: true } );
-    })
-    .then(dbUserData => {
-      if(!dbUserData) {
-        res.status(404).json({ message: 'Unable to find any thoughts for you.' });
-        return;
-      }
-      res.json(dbUserData);
-    })
-    .catch(err => res.json(err));
+    // after a lot of trial and error this is way I ended up using to get the username from the 
+    // the userId.
+    // https://dev.to/ramonak/javascript-how-to-access-the-return-value-of-a-promise-object-1bck
+
+    User.findById(
+            { _id: params.userId })
+            .select('username')
+            // .then( data =>  data.username );
+            .then( data =>  
+                    Thought.create( 
+                      { 
+                        thoughtText: body.thoughtText, 
+                        userId: params.userId,
+                        username:  data.username,
+                      })
+                      )
+
+            .then( ({ _id }) => {
+                return User.findOneAndUpdate(
+                            { _id: params.userId }, 
+                            { $push: { thoughts: _id } }, 
+                            { new: true } );
+              })
+
+            .then( user => 
+              !user 
+                ? res.status(404).json({ 
+                    message: 'Something has gone wrong, please confirm the user ID being used to create the thought.' 
+                  })
+                : res.json(user)
+            )
+
+      .catch(err => res.json(err));
+    
   },
   
 
-  // getAllThoughts
+  // == "R" get all thoughts ==========
   getAllThoughts(req, res) 
   {
     Thought.find({})
-    .sort({ _id: -1 })
-    .then(dbThoughtData => res.json(dbThoughtData))
-    .catch(err => {
-      console.log(err);
-      res.status(400).json(err);
-    });
+      .sort({ _id: -1 })
+      .select('-__v')
+      .then( thoughts => res.json( thoughts ))
+
+      .catch(err => {
+        console.log(err);
+        res.status(400).json(err);
+      });
   },
   
 
-  // getSingleThought,
+  // == "R" get thought by ID =========
   getSingleThought( { params }, res ) 
   {
-    Thought.findOne({ _id: params.id })
+    console.log( params );
+    Thought.findOne({ _id: params.thoughtId })
+
     .populate({
       path: 'reactions',
       select: '-__v'
     })
-    // selects everything except the versioning tag
+
+    // excludes the version tag, selects everything else.
     .select('-__v')
-    .then(dbThoughtData => {
+    .then( thought => 
 
-      if (!dbThoughtData) {
-        res.status(400).json({ message: 'Unable to find any thoughts for you.'});
-        return;
+      !thought
+        ? res.status(400).json({ message: 'Unable to find any thoughts for you.'})
+        : res.json( thought )
+    )
 
-      }
-      res.json(dbThoughtData);
-    })
-    .catch(err => {res.status(400).json(err)});
+    .catch( err => res.status(400).json(err) );
   },
 
 
-  // updateThought
+   // == "U" update a thought =========
   updateThought({ params, body }, res) 
   {
+    console.log( { params, body } );
+
     Thought.findOneAndUpdate(
-            { _id: params.id }, 
+            { _id: params.thoughtId }, 
             body, 
             { new: true, runValidators: true })
     .populate({
@@ -72,91 +100,194 @@ const thoughtsController = {
             select: '-__v'
     })
     .select('-__v')
-    .then(dbThoughtData => {
+    .then( thought => 
 
-      if (!dbThoughtData) {
-        res.status(404).json({ message: 'Unable to find the thought with the id your requesting.' });
-        return;
-      }
-
-      res.json(dbThoughtData);
-
-    })
+      !thought
+        ? res.status(404).json({ message: 'Unable to find the thought with the id your requesting.' })
+        : res.json( thought )
+    )
 
     .catch(err => res.status(400).json(err));
   },
 
 
-  // removeThought
+  // == "D" delete all thoughts ==========
+  removeAllThoughts( req, res ) {
+
+    Thought.deleteMany( {} )
+  
+      .then( removeThoughts => 
+        !removeThoughts 
+          ? res.status(404).json({ message: 'Unable to find any thoughts to delete.' })
+
+          // found this method to set the array for all users to an empty array
+          // https://stackoverflow.com/questions/41265930/how-to-remove-subdocument-inside-of-a-object-using-mongoose#41270093
+          : User.updateMany( { $set: { thoughts: [] } } )
+      )
+
+        .then( user =>
+        !user
+          ? res.status(404).json({ message: 'Thoughts all deleted, but no users found' })
+          : res.json({ message: 'Thoughts successfully deleted' })
+      )
+      
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json(err);
+    });
+  },
+
+
+  // == "D" delete a thought ==========
   removeThought({ params }, res) {
-    Thought.findOneAndDelete({ _id: params.id })
-    .then( removeThought => {
 
-        if ( !removeThought ) {  
-          return res.status(404).json({ message: 'Unable to find the thought with the id your requesting.' }
-          );
-        }
-        return User.findOneAndUpdate(
-              { _id: params.userId },
-              { $pull: { thoughts: params.id } }, 
-              { new: true }
-            );
-    })
+    console.log( {params} );
 
-    .then( dbThoughtData => {
+    Thought.findOneAndDelete({ _id: params.thoughtId })
+      .then( removeThought => 
 
-      if (!dbThoughtData) {
-        res.status(404).json({ message: 'Unable to find the thought with the id your requesting.' });
-        return;
+          !removeThought   
+            ? res.status(404).json({ message: `Unable to find the thought with the id you're requesting.` })
 
-      }
-
-      res.json(dbThoughtData);
-
-    })
-    .catch(err => res.json(err));
-  },
-
-
-  // addReaction,
-  addReaction({ params, body }, res) {
-    Thought.findOneAndUpdate(
-              { _id: params.thoughtId }, 
-              { $push: { reactions: body } }, 
-              { new: true, runValidators: true }
+            // as there will be 1 thought against the id I decided on using 'updateOne' method.
+            : User.updateOne( 
+                { thoughts: params.thoughtId },
+                { $pull: { thoughts: params.thoughtId } }
             )
-    .populate({
-      path: 'reactions',
-      select: '-__v'
-    })
-    .select('-__v')
-    .then(dbThoughtData => {
-      if (!dbThoughtData) {
-        res.status(404).json({ message: 'No thought found with this id!' });
-        return;
-      }
-      res.json(dbThoughtData);
-    })
-    .catch(err => res.json(err));
+      )
+
+      .then( thought =>
+        !thought
+          ? res.status(404).json({
+              message: 'Thought deleted, but no user thoughts were found',
+            })
+          : res.json({ message: `Your thought with id: ${ params.thoughtId } has been deleted.` })
+      )
+
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json(err);
+    });
   },
 
 
-  // removeReaction
+  // == REACTIONS =================================================================================
+
+  // == "C" create a reaction =========
+  addReaction({ params, body }, res) 
+  {
+    console.log( { params, body } );
+
+    // building up the body to include the userId - easier to manage 
+    // when using $push to reactions array
+    body.userId = params.userId;
+    console.log(body);
+
+    // using the same approach I worked out for the 'addThought' controller above to 
+    // find the username associated with the userId posting the reaction.
+    User.findById(
+      { _id: params.userId })
+      .select('username')
+      .then
+        ( 
+          data => 
+                Thought.findOneAndUpdate(
+                          { _id: params.thoughtId }, 
+                          { $push: { reactions: 
+                                      { 
+                                        reactionBody: body.reactionBody, 
+                                        userId: body.userId, 
+                                        username: data.username, 
+                                      } 
+                                    } 
+                                  }, 
+                          { new: true, runValidators: true }
+                      )
+                      .populate({
+                        path: 'reactions',
+                        select: '-__v'
+                      })
+                      .select('-__v')
+        )
+    .then( thought => 
+
+      !thought
+        ? res.status(404).json({ message: 'No thought found with this id!' })
+        : res.json( thought )
+    )
+
+    .catch(err => res.json(err));
+
+  },
+
+
+  // To complete the CRUD, decided to add a read route for reactions. 
+  // == "R" get all thoughts ==========
+  getAllReactions(req, res) 
+  {
+    Thought.find({})
+      .select('thoughtText reactions -_id')
+      .populate({
+        path: 'reactions',
+        select: '-__v'
+      })
+      .then( reactions => res.json( reactions ))
+
+      .catch(err => {
+        console.log(err);
+        res.status(400).json(err);
+      });
+  },
+
+
+  // Decided to add an 'Update' route for reactions.  Wanted to see if I could do it.
+  // Reference MongoDB to work it out:
+  // https://docs.mongodb.com/manual/reference/operator/update/positional-filtered/
+
+  // == "U" update a reaction =========
+  updateReaction({ params, body }, res) 
+    {
+      console.log( { params, body } );
+
+      Thought.findOneAndUpdate(
+              { _id: params.thoughtId }, 
+              { $set: { "reactions.$[elem].reactionBody": body.reactionBody, } },
+              { arrayFilters: [ { "elem.reactionId": { $eq: params.reactionId }}] })
+      .populate({
+              path: 'reactions',
+              select: '-__v'
+      })
+      .select('-__v')
+      .then( thought => 
+  
+        !thought
+          ? res.status(404).json({ message: 'Unable to find the thought with the id your requesting.' })
+          : res.json( { message: `You just updated a reaction with id: ${params.reactionId} from thought:`,  thought } )
+      )
+  
+      .catch(err => res.status(400).json(err));
+    },
+
+
+  // == "D" delete a reaction =========
   removeReaction({ params }, res) {
+    
+    console.log( params );
+
     Thought.findOneAndUpdate( 
           { _id: params.thoughtId }, 
           { $pull: { reactions: { reactionId: params.reactionId } } }, 
           { new: true }
         )
         
-    .then(dbThoughtData => {
-      if (!dbThoughtData) {
-        res.status(404).json({ message: 'No thought found with this id!' });
-        return;
-      }
-      res.json(dbThoughtData);
-    })
+    .then( thought => 
+      !thought 
+        ? res.status(404).json({ message: 'No thought found with this id!' })
+        : res.json({ message: `You just deleted a reaction with id: ${params.reactionId} from thought:`,  thought })
+    )
+
     .catch(err => res.status(400).json(err));
+
   }
 };
 

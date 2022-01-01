@@ -1,22 +1,28 @@
 const router = require('express').Router();
 const {
-  addThought,       // C
-  getAllThoughts,   // R
-  getSingleThought, // R
-  updateThought,    // U
-  removeThought,    // D
+  addThought,        // C
+  getAllThoughts,    // R
+  getSingleThought,  // R
+  updateThought,     // U
+  removeAllThoughts, // D
+  removeThought,     // D
 
-  addReaction, 
-  removeReaction
+  addReaction,       // C
+  getAllReactions,   // R
+  updateReaction,    // U 
+  removeReaction     // D
 
 } = require('../../controllers/thoughtsController');
+
+// == THOUGHTS ============================
 
 // ========================================
 
 // /api/thoughts
 router
   .route('/')
-  .get(getAllThoughts);
+  .get(getAllThoughts)
+  .delete(removeAllThoughts);
 
 // ========================================
 
@@ -34,18 +40,30 @@ router
 .route('/:userId')
 .post(addThought);
 
+
+// ========================================
+// == REACTIONS ===========================
+
+// /api/thoughts/reactions
+router
+  .route('/reactions/all')
+  .get(getAllReactions);
+
 // ========================================
 
-// /api/thought/:thoughtId/reactions
+// changed the route slightly to have /reaction first 
+// followed by the :thoughtId and :userId
+// /api/thoughts/reaction/:thoughtId/:userId
 router
-  .route('/:thoughtId/reaction')
+  .route('/reaction/:thoughtId/:userId')
   .post(addReaction);
 
 // ========================================
 
-// /api/thoughts/:thoughtId/:reactionId
+// /api/thoughts/reaction/:thoughtId/:reactionId
 router
-  .route('/:thoughtId/reaction/:reactionId')
+  .route('/reaction/:thoughtId/:reactionId')
+  .put(updateReaction)
   .delete(removeReaction);
 
 // ========================================

@@ -7,6 +7,6 @@ const apiRoutes = require('./api');
 router.use('/api', apiRoutes);
 
 router.use((req, res) => 
-    res.send(`<h1>🤷 Sorry, that route isn't available at the moment, <a href= '/'>click me</a> to return home.</h1>`));
+    res.send(`<h1>🤷 Sorry, that route isn't available at the moment, please check your url route.</h1>`));
 
 module.exports = router;
