@@ -128,15 +128,15 @@ const userController = {
     // I ran out of time to work out how to pass a more informative error msg.
     const filter = ( params.id != params.friendId )
                     ? { _id: params.id } 
-                    : { _id: "error" } ;
+                    : { _id: "error" };
 
+    // OMG - after a lot of trial and error and web searching, I finally found 
+    // the method to stop the same friend (multiple entries) saving into the friends subdocument.
+    // https://stackoverflow.com/questions/44043710/conditional-push-to-the-array-in-mongodb
     User.findOneAndUpdate(
       filter,
-      { $push: { friends: params.friendId } },
-
-      // Mongoose validators for updates are off by default, 
-      // runValidators: true activates validation.
-      { new: true, runValidators: true }
+      { $addToSet: { friends: params.friendId }},
+      { new: true, upsert: true, }
     )
 
     .select('-__v')

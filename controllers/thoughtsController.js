@@ -170,7 +170,7 @@ const thoughtsController = {
     });
   },
 
-
+  
   // == REACTIONS =================================================================================
 
   // == "C" create a reaction =========
@@ -241,7 +241,7 @@ const thoughtsController = {
 
 
   // Decided to add an 'Update' route for reactions.  Wanted to see if I could do it.
-  // Reference MongoDB to work it out:
+  // I referenced MongoDB to work it out:
   // https://docs.mongodb.com/manual/reference/operator/update/positional-filtered/
 
   // == "U" update a reaction =========

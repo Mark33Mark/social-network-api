@@ -1,7 +1,7 @@
 {
   "name": "social-network-api",
   "version": "1.0.0",
-  "description": "Mongoose back-end social networking API",
+  "description": "Mongoose server-side ( back-end ) social networking API",
   "main": "index.js",
   "directories": {
     "doc": "doc"
