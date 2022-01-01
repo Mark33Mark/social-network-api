@@ -149,14 +149,14 @@ I've relied heavily on the online documentation for MongoDB and Mongoose for thi
 [x]  Opening an API GET route in Insomnia for users and thoughts provides the data for each of these routes, displayed in a formatted JSON.  
 [x]  Opening API POST, PUT, and DELETE routes in Insomnia successfully creates, updates, and deletes users and thoughts in the database.  
 [x]  Opening API POST and DELETE routes in Insomnia successfully creates and deletes reactions to thoughts and adds and removes friends to a user’s friend list.  
-[x]  Uses the Mongoose package to connect to a MongoDB database.
-[x]  Includes User and Thought models outlined in the homework instructions.
-[x]  Includes schema settings for User and Thought models as outlined in the homework instructions.
-[x]  Includes Reactions as the reaction field’s subdocument schema in the Thought model.
-[x]  Uses functionality to format queried timestamps properly.
+[x]  Uses the Mongoose package to connect to a MongoDB database.  
+[x]  Includes User and Thought models outlined in the homework instructions.  
+[x]  Includes schema settings for User and Thought models as outlined in the homework instructions.  
+[x]  Includes Reactions as the reaction field’s subdocument schema in the Thought model.  
+[x]  Uses functionality to format queried timestamps properly.  
 [x]  BONUS - application deletes a user's associated thoughts when the user is deleted.  
 [x]  Repository has a unique name; follows best practice for file structure; and naming conventions.  
-[x]  Repsository follows best practices for class/id naming conventions, indentation, quality comments, etc.  
+[x]  Repository follows best practices for class/id naming conventions, indentation, quality comments, etc.  
 [x]  Repository contains multiple descriptive commit messages.  
 [x]  Repository contains a README file with description, screenshots and link to a walkthrough video.  
 
