@@ -22,7 +22,7 @@ date_formatter:  timestamp  => {
         let hour;
 
         // check for 24-hr time
-        if (d.getHours > 12) {
+        if (d.getHours() > 12) {
             hour = Math.floor(d.getHours() / 2);
         } else {
             hour = d.getHours();

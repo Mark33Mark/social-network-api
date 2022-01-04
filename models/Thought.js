@@ -4,7 +4,7 @@ const dateFormat               = require('../utils/dateFormat');
 const reactionSchema = new Schema
 (
   {
-    _id: 
+    reactionId: 
     {
       type: Schema.Types.ObjectId,
       default: () => new Types.ObjectId()
@@ -46,10 +46,10 @@ const reactionSchema = new Schema
       virtuals: true,
       getters: true,
       // see virtual 'id' below, transform used to remove _id.
-      transform: function(doc, ret) 
-      {
-        delete ret._id;
-      }
+      // transform: function(doc, ret) 
+      // {
+      //   delete ret._id;
+      // }
     },
     // prevents virtuals creating duplicates of _id as `id`
     id: false

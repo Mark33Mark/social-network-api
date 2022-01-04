@@ -39,7 +39,7 @@ const thoughtsController = {
                 ? res.status(404).json({ 
                     message: 'Something has gone wrong, please confirm the user ID being used to create the thought.' 
                   })
-                : res.json(user)
+                : res.json({ message:`${user.username} has successfully added a new thought`, user })
             )
 
       .catch(err => res.json(err));
@@ -183,8 +183,8 @@ const thoughtsController = {
     body.userId = params.userId;
     console.log(body);
 
-    // using the same approach I worked out for the 'addThought' controller above to 
-    // find the username associated with the userId posting the reaction.
+    // using the same approach I worked out for the 'addThought' controller above, I'm using 
+    // a nested query to find the username associated with the userId posting the reaction.
     User.findById(
       { _id: params.userId })
       .select('username')
@@ -207,7 +207,7 @@ const thoughtsController = {
                         path: 'reactions',
                         select: '-__v'
                       })
-                      .select('-__v')
+                      .select('reactions')
         )
     .then( thought => 
 
@@ -226,7 +226,7 @@ const thoughtsController = {
   getAllReactions(req, res) 
   {
     Thought.find({})
-      .select('thoughtText reactions -_id')
+      .select('thoughtText reactions _id')
       .populate({
         path: 'reactions',
         select: '-__v'

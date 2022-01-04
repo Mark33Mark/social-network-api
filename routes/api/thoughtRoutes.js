@@ -44,7 +44,7 @@ router
 // ========================================
 // == REACTIONS ===========================
 
-// /api/thoughts/reactions
+// /api/thoughts/reactions/all
 router
   .route('/reactions/all')
   .get(getAllReactions);

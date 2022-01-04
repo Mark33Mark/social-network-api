@@ -7,10 +7,22 @@ const userController = {
   // == "C" create new user ===========
   createUser({ body }, res) 
   {
-  
+    console.log(body);
+
     User.create( body )
-      .then(dbUserData => res.json(dbUserData))
-      .catch(err => res.status(400).json(err));
+      // Nested Query to remove the __v from the response - overkill
+      // but stubbornly wanted to see if I could do it.
+      .then( user => { 
+        User.findOne({ _id: user.id })
+        .select('-__v')
+        .then( data => res.json( data ));
+      })
+
+      .catch(err => {
+      console.log(err);
+      res.status(400).json(err);
+      });
+    
   },
 
 
@@ -21,7 +33,7 @@ const userController = {
 
       .select('-__v')
       .sort({ username: 1 })
-      .then(dbUserData => res.json(dbUserData))
+      .then( user => res.json( user ))
 
       .catch(err => {
         console.log(err);
@@ -65,13 +77,13 @@ const userController = {
     User.findOneAndUpdate(
             { _id: params.id }, 
             body, 
-            { new: true }
+            { new: true, runValidators: true }
           )
-          
+    .select('-__v')        
     .then( user => 
       !user
         ? res.status(404).json({ message: 'No user with this id was found' })
-        : res.json( user )
+        : res.json( {message: `You've successfully updated user record for: ${user.username}`, user })
     )
 
     .catch(err => res.status(400).json(err));
@@ -104,7 +116,7 @@ const userController = {
           ? res.status(404).json({
               message: 'User deleted, but no user thoughts were found',
             })
-          : res.json({ message: 'User successfully deleted' })
+          : res.json({ message: `The user with ID: ${params.id} was successfully deleted` })
       )
 
       .catch((err) => {
@@ -144,7 +156,7 @@ const userController = {
     .then( user => 
       !user
         ? res.status(404).json({ message: "I can't find a user with that id." })
-        : res.json( user )
+        : res.json({ message:`${user.username} has successfully added a friend:`, user })
     )
 
     .catch(err => res.json(err));
@@ -156,22 +168,25 @@ const userController = {
   deleteFriend( { params }, res ) 
   {
     console.log( { params } );
+    
+    // as for creating a friend, using this filter to check
+    // if a user incorrectly unfriending their id.
+    const filter = ( params.id != params.friendId )
+    ? { _id: params.id } 
+    : { _id: "error" };
 
     User.findOneAndUpdate(
-            { _id: params.id },
-            { $pull: { friends: params.friendId } },
-            { new: true }
+              filter,
+              { $pull: { friends: params.friendId } },
+              { new: true, }
           )
-
-    .select('-__v')
-
-    .then( user => 
-      !user
-        ? res.status(404).json({ message: "I can't find a user with that id." })
-        : res.json(user)
-    )
-    
-    .catch(err => res.status(400).json(err));
+        .select('-__v')
+        .then( user => 
+            !user
+              ? res.status(404).json({ message: "I can't find a user with that id." })
+              : res.json({ message:`${user.username} has successfully removed a friend:`, user })
+          )
+        .catch(err => res.status(400).json(err));
 
   }
 };
