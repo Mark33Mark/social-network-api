@@ -45,11 +45,11 @@ const reactionSchema = new Schema
     {
       virtuals: true,
       getters: true,
-      // see virtual 'id' below, transform used to remove _id.
-      // transform: function(doc, ret) 
-      // {
-      //   delete ret._id;
-      // }
+      //  see virtual 'id' below, transform used to remove _id.
+      transform: function(doc, ret) 
+      {
+        delete ret._id;
+      }
     },
     // prevents virtuals creating duplicates of _id as `id`
     id: false

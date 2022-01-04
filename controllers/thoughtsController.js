@@ -252,7 +252,7 @@ const thoughtsController = {
       Thought.findOneAndUpdate(
               { _id: params.thoughtId }, 
               { $set: { "reactions.$[elem].reactionBody": body.reactionBody, } },
-              { arrayFilters: [ { "elem.reactionId": { $eq: params.reactionId }}] })
+              { arrayFilters: [ { "elem.reactionId": { $eq: params.reactionId }}], new: true  })
       .populate({
               path: 'reactions',
               select: '-__v'

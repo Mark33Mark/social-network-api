@@ -45,15 +45,15 @@
 
 ### 2. Features  
 
+A **Walkthrough video** is available by [clicking this link]( https://drive.google.com/file/d/1fsnjRheKos9ZZgUhxuAWuflHlBQoJOt5/view?usp=sharing ) . Please note the quality of the video is better if you download it to your computer.  The file is approximately 115mb and it seems Google decreases the quality of the video if you watch it from my Google Drive instead of downloading and watching from your computer.
+
 * The application is invoked in the terminal with any of these commands: node index.js, nodemon index.js or npm start.  
 * When the server is started, the Mongoose models are synced to the MongoDB database.  
 * Opening an API GET route in Insomnia for users and thoughts provides the data for each of these routes, displayed in a formatted JSON.  
-* Opening API POST, PUT, and DELETE routes in Insomnia successfully creates, updates, and deletes users and thoughts in the database.
-* Opening API POST and DELETE routes in Insomnia successfully creates and deletes reactions to thoughts and adds and removes friends to a user’s friend list
+* Opening API POST, PUT, and DELETE routes in Insomnia successfully creates, updates, and deletes users and thoughts in the database.  
+* Opening API POST and DELETE routes in Insomnia successfully creates and deletes reactions to thoughts and adds and removes friends to a user’s friend list.  
 
-A walkthrough video is available by clicking on this [link]( # )
-
-Features of the application are shown in the following animated screengrabs of Insomnia that demonstrates the application's various API routes.  The routes are grouped as follows:
+Features of the application are shown in the following animated screengrabs of Insomnia that demonstrates the application's various API routes.  The routes are grouped as follows:  
 
 #### **Users**  
 
@@ -133,7 +133,7 @@ I've relied heavily on the online documentation for MongoDB and Mongoose for thi
  All actions not checked are still to be completed:  
 
 [x]  Github repository contains application code [Github location](https://github.com/Mark33Mark/social-network-api)  
-[x]  Walkthrough video demonstrating the functionality of the social media API is available by clicking on this [link]( # ).  
+[x]  Walkthrough video demonstrating the functionality of the social media API is available by clicking on this [link]( https://drive.google.com/file/d/1fsnjRheKos9ZZgUhxuAWuflHlBQoJOt5/view?usp=sharing ).  
 [x]  The walkthrough video shows:  
 
 *  all technical acceptance criteria being met.  
